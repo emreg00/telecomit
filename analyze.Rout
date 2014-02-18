@@ -1,0 +1,75 @@
+
+R version 2.15.2 (2012-10-26) -- "Trick or Treat"
+Copyright (C) 2012 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> 
+> data.dir<-"../data/output/" 
+> 
+> library(ggplot2)
+> library(reshape)
+Loading required package: plyr
+
+Attaching package: ‘reshape’
+
+The following object(s) are masked from ‘package:plyr’:
+
+    rename, round_any
+
+> 
+> main<-function() {
++     draw()
++ }
+> 
+> draw<-function() {
++     file.name = paste(data.dir, "combined.dat", sep="")
++     d = read.table(file.name, header=T)
++     #ggplot(data=d, aes(x=timestap)) + geom_line(aes(y=speed)) + geom_point(aes(y=intensity))
++     # e=melt(d, "condition")
++     #e=d[d$intensity>0,]
++ 
++     # Plot values for one grid
++     #p = ggplot(data = d, aes_string(x = variable, y = selected)) + geom_point(aes(size = factor(m), color=factor(flag), alpha=1)) + geom_hline(aes_string(yintercept=cutoff)) + theme_bw() + labs(y="P-value") + guides(size=guide_legend("N target"), color=guide_legend("Indication"), alpha=F) 
++     #print(p)
++ 
++     pdf(sub("\\.dat", ".pdf", file.name), onefile=T)
++     for(id in c(1281, 4357, 4358, 4359)) {
++ 	e = d
++ 	e = e[e$grid==id,]
++ 	a = max(e$intensity)
++ 	e$intensity = 100*e$intensity/a
++ 	a = max(e$speed)
++ 	e$speed = 100*e$speed/a
++ 	#e$intensity = scale(e$intenstiy) #e$intensity/max(e$intensity)
++ 	#e$speed = scale(e$speed) #e$speed/max(e$speed)
++ 	plot(e$t, e$intensity, col=2, type="l", main=paste("grid id:", id), ylab="Ratio compared to max (%)")
++ 	lines(e$t, e$speed, col=3)
++     }
++     dev.off()
++ }
+> 
+> main()
+null device 
+          1 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+  3.048   0.072   3.132 
